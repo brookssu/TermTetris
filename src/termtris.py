@@ -1,7 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""The controller and application entry point of the Tetris game.
+#   Copyright 2023 Brooks Su
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+"""The controller and application entry point of the Termtris game.
 """
 
 import os
@@ -12,23 +26,23 @@ import color256 as co
 from color256 import Color
 from termkey import getkey, Key
 
-from tetro import Tetro
-from backend import TetrisBackend
-from panel import ActivePanel, MessagePanel
+from tt_tetro import Tetro
+from tt_backend import TetrisBackend
+from tt_panel import ActivePanel, MessagePanel
 
 
 _SCORE_TABLE = (10, 100, 200, 400, 800)
 _LEVEL_TABLE = (1000, 2000, 4000, 8000, 16000, 32000, 64000, 80_000_000)
 
 
-class Tetris():
+class Termtris():
     # pylint: disable=too-few-public-methods
     # pylint: disable=too-many-instance-attributes
-    """The controller of the Tetris game.
+    """The controller of the Termtris game.
 
     The class have only one public method run() which reads keys from input
-    and gets appropriate methods of the backend and the panels to process the
-    keyboard events.
+    and gets appropriate methods of the backend and the panels to process
+    the keyboard events.
     """
     def __init__(self, o_row: int, o_col: int, width: int, height: int):
         self.act_panel = ActivePanel(o_row, o_col, width, height)
@@ -44,7 +58,7 @@ class Tetris():
 
 
     def _init_msg_panel(self):
-        self.msg_panel.put_text('TermTetris', align=MessagePanel.CENTER)
+        self.msg_panel.put_text('Termtris', align=MessagePanel.CENTER)
         self.msg_panel.add_separator()
         self.msg_panel.put_text(
                 'Right:  Move Right\n'
@@ -114,8 +128,8 @@ class Tetris():
 
     def run(self):
         """Continuously reads keys from input and gets appropriate functions
-        to process these key events. In idle time, makes the current tetro to
-        fall down by count ticks.
+        to process these key events. In idle time, makes the current tetro
+        to fall down by count ticks.
         """
         key_funcs = {
             Key.NONE: self._idle_fall,
@@ -141,7 +155,7 @@ class Tetris():
 
 
 def main():
-    """Entry point of the Tetris game.
+    """Entry point of the Termtris game.
 
     Detects terminal environment and makes initial arguments of the game.
     """
@@ -162,7 +176,7 @@ def main():
     co.set_color(Color.DEEP_KHAKI, Color.COFFEE)
 
     try:
-        Tetris(o_row, o_col, width, height).run()
+        Termtris(o_row, o_col, width, height).run()
     finally:
         co.reset_color()
         cursor.show_cursor()
