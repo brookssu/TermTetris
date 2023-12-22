@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = 'termtris'
-version = '0.9.10'
+version = '0.9.12'
 description = 'A Tetris game in character terminal environment'
 readme = 'README.md'
 requires-python = '>= 3.6'
@@ -27,7 +27,7 @@ classifiers = [
     'Intended Audience :: End Users/Desktop',
     'Topic :: Games/Entertainment',
 ]
-dependencies = ['ltermio',]
+dependencies = ['ltermio>= 0.2.6',]
 
 [project.urls]
 Homepage = 'https://github.com/brookssu/termtris'
