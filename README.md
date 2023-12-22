@@ -9,7 +9,7 @@ Uses **pip** to install the package:
 Runs command **termtris** or **tt** after installed, then enjoy!
 
 ## Background
-I wrote this game when I was learning **Python** language a few months ago. As a learning practice, it's not about business, just for fun and to reminisce about the past.
+I wrote this game when I was learning **Python** language a few months ago. As a learning practice, it's not about business, but just for fun and to reminisce about the past.
 
 The game package dependent on my another Python package **ltermio**, no other third-party packages required. In fact, the **ltermio** is its by-product.
 

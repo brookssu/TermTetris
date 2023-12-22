@@ -212,7 +212,7 @@ class MessagePanel(ActivePanel):
         align: int | None = None,
         row: int | None = None,
     ):
-        """Outputs text on the panel.
+        r"""Outputs text on the panel.
 
         Args:
             text: The text to output. It can use '\n' to wrap around, the

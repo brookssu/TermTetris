@@ -14,7 +14,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-"""Pre-defines the constant instances of all types and shapes of the tetrominos.
+"""Pre-defines constants of all types and shapes of tetrominos.
 """
 
 import random
@@ -62,8 +62,7 @@ class Tetro:
     """Data structure description of the tetrominos.
 
     All types and shapes of tetrominos are pre-defined as constants and
-    their instances are stored in a pool, in order of alphabetically
-    sorted.
+    stored in a pool, in order of alphabetically sorted.
     """
     SQUARE_I = UIcon.GREEN_SQUARE
     SQUARE_J = UIcon.BLUE_SQUARE
@@ -97,7 +96,7 @@ class Tetro:
 
 
     def rotate(self):
-        """Returns a new instance of rotating shape of the tetro.
+        """Returns a new tetro with the clockwise rotated shape.
         """
         i = TETRO_POOL.index(self)
         return TETRO_POOL[(i & 0xfc) | ((i + 1) & 0x03)]
@@ -105,7 +104,7 @@ class Tetro:
 
     @staticmethod
     def choice():
-        """Returns a random choiced tetro instance from the pool of tetrominos.
+        """Returns a random choiced tetro from the pool of tetrominos.
         """
         return random.choice(TETRO_POOL)
 

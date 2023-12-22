@@ -36,9 +36,9 @@ class TetrisBackend:
     """Backend service for the Tetris game.
 
     The backend guides the game by maintaining a internal bitmap grid and
-    the tetro's info, it determines which operations of frontend are valid.
-    Almost all of its public methods have an uniform returning format of
-    tuple on success, except print_grid() which is only for debugging.
+    the tetro's info. Almost all of its public methods have an uniform
+    returning format of tuple on success, except print_grid() which is only
+    for debugging.
 
     The result tuple is in form of (tetro, row, col, elim_rows), the first
     three parameters indicates what and where the tetro should be shown, the
@@ -55,7 +55,7 @@ class TetrisBackend:
 
 
     def kick_off(self) -> tuple[Tetro, int, int, list[int] | None] | None:
-        """Start a new game.
+        """Starts a new game.
         """
         for i in range(self.height):
             self.grid[i] = 0
@@ -116,8 +116,9 @@ class TetrisBackend:
         """Moves the tetro to the left one column.
 
         Returns:
-            The tetro's info in a tuple after sucessful move, None if the
-            left column is out of the grid bound.
+            The tetro's info in a tuple after sucessful move, or None if
+            the left column is out of bound or overlapped with previous
+            tetro squares.
         """
         return self._hori_move(-1)
 
@@ -126,8 +127,9 @@ class TetrisBackend:
         """Moves the tetro to the right one column.
 
         Returns:
-            The tetro's info in a tuple after sucessful move, None if the
-            right column is out of the grid bound.
+            The tetro's info in a tuple after sucessful move, or None if
+            the right column is out of bound or overlapped with previous
+            tetro squares.
         """
         return self._hori_move(1)
 
@@ -140,6 +142,8 @@ class TetrisBackend:
         tetro to be merged into the grid and elimination checking, then
         returns the eliminated row numbers if there were, and a new tetro
         which be issued at the top of the grid.
+        Returns None if there is no more space to issue a new tetro, that
+        means the game is over.
         """
         if self._is_overlapped(self.t_row + 1, self.t_col):
             self._merge()
@@ -163,6 +167,10 @@ class TetrisBackend:
     @_check_tetro
     def rotate(self) -> tuple[Tetro, int, int, None] | None:
         """Rotates the current tetro clockwise.
+
+        Returns:
+            A new rotated tetro instance on sucess, or None if there is no
+            enough space to rotating.
         """
         old = self.tetro
         self.tetro = old.rotate()
