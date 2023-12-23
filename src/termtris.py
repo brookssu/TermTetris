@@ -175,12 +175,12 @@ def main():
     cursor.clear_screen()
     cursor.hide_cursor()
     co.set_color(Color.DEEP_KHAKI, Color.COFFEE)
-    termkey.keyparam(echo=False, intr=False)
+    termkey.setparams(echo=False, intr=False)
 
     try:
         Termtris(o_row, o_col, width, height).run()
     finally:
-        termkey.keyparam()
+        termkey.setparams()
         co.reset_color()
         cursor.show_cursor()
         cursor.restore_screen()

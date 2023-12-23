@@ -1,4 +1,6 @@
-0.9.12 Current release
+0.9.13 Current release
+  * fix 'has no attribute keyparam' after upgrade ltermio to 0.2.7.
+0.9.12
   * fix the 'getkey() is not defined' while press esc to pause game.
 0.9.11
   * Modify code to adapt the interface changing of the termkey module.
