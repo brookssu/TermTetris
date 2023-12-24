@@ -1,4 +1,6 @@
-0.9.13 Current release
+0.9.16 Current release
+  * have a taste of namedtuple and data class.
+0.9.13
   * fix 'has no attribute keyparam' after upgrade ltermio to 0.2.7.
 0.9.12
   * fix the 'getkey() is not defined' while press esc to pause game.
@@ -7,4 +9,4 @@
 0.9.10
   * Rename the game and source files to resolve conflicts.
 0.9.9
-  * Almost a stable version with complete functionality.
+  + Almost a stable version with complete functionality.

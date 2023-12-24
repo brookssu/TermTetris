@@ -24,6 +24,7 @@ next tetro, greeting and help text, etc.
 
 import time
 import functools
+from collections import namedtuple
 from wcwidth import wcswidth
 
 from cursor import putmsg, downward_seq, rect_border_seq
@@ -41,13 +42,13 @@ def _color(func):
     # A decorator to set and restore the color setting.
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
-        if self.color_scheme:
-            co.set_color(self.color_scheme[0], self.color_scheme[1])
+        if self.co_scheme:
+            co.set_color(self.co_scheme[0], self.co_scheme[1])
         try:
             return func(self, *args, **kwargs)
         finally:
-            if self.color_scheme:
-                co.set_color(self.color_scheme[2], self.color_scheme[3])
+            if self.co_scheme:
+                co.set_color(self.co_scheme[2], self.co_scheme[3])
     return wrapper
 
 
@@ -69,7 +70,7 @@ class ActivePanel:  # pylint: disable=too-many-instance-attributes
         self.width = width
         self.height = height
         self.blank = blank
-        self.color_scheme = None
+        self.co_scheme: tuple[int, int, int, int] | None = None
         self.image = [[blank for _ in range(self.width)]
                       for _ in range(self.height)]
         self.t_row: int
@@ -150,7 +151,7 @@ class ActivePanel:  # pylint: disable=too-many-instance-attributes
         """Merges the current tetro into background grid.
         """
         for i in range(6):
-            if (self.tetro.bits >> i) & 0x01:
+            if (self.tetro.bitmap >> i) & 0x01:
                 row = self.t_row + i // self.tetro.width
                 col = self.t_col + i % self.tetro.width
                 self.image[row][col] = self.tetro.square

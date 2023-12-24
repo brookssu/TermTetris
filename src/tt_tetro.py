@@ -14,13 +14,56 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-"""Pre-defines constants of all types and shapes of tetrominos.
+"""Descripts tetromino by a frozen data class, and pre-defines constants of
+all its instances.
 """
 
 import random
+from dataclasses import dataclass
 
 from cursor import putmsg, v_composing
 from unicon import UnicodeIcon as UIcon
+
+
+@dataclass(frozen=True)
+class Tetro:
+    """Data structure of the tetromino, a frozen data class.
+    """
+    height: int
+    width: int
+    bitmap: int
+    square: str
+    shape: str
+
+
+    SQUARE_I = UIcon.GREEN_SQUARE
+    SQUARE_J = UIcon.BLUE_SQUARE
+    SQUARE_L = UIcon.ORANGE_SQUARE
+    SQUARE_O = UIcon.YELLOW_SQUARE
+    SQUARE_S = UIcon.GREEN_SQUARE
+    SQUARE_T = UIcon.MAGENTA_SQUARE
+    SQUARE_Z = UIcon.RED_SQUARE
+
+
+    @staticmethod
+    def choice():
+        """Returns a random choiced instance from the pool of tetros.
+        """
+        return random.choice(TETRO_POOL)
+
+
+    def show(self, row: int, col: int, square: str):
+        """Shows tetro on the specified coordinate by using the 'square' as
+        the composing unit.
+        """
+        putmsg(row, col, self.shape.format(square))
+
+
+    def rotate(self):
+        """Returns a new instance with the clockwise rotated shape.
+        """
+        i = TETRO_POOL.index(self)
+        return TETRO_POOL[(i & 0xfc) | ((i + 1) & 0x03)]
 
 
 _P1 = ':{0}\x1b2hj'
@@ -56,57 +99,6 @@ _SHAPE_T2 = v_composing(f'{_P010}{_P111}')
 _SHAPE_T3 = v_composing(f'{_P01}{_P11}{_P01}')
 _SHAPE_Z0 = v_composing(f'{_P110}{_P011}')
 _SHAPE_Z1 = v_composing(f'{_P01}{_P11}{_P10}')
-
-
-class Tetro:
-    """Data structure description of the tetrominos.
-
-    All types and shapes of tetrominos are pre-defined as constants and
-    stored in a pool, in order of alphabetically sorted.
-    """
-    SQUARE_I = UIcon.GREEN_SQUARE
-    SQUARE_J = UIcon.BLUE_SQUARE
-    SQUARE_L = UIcon.ORANGE_SQUARE
-    SQUARE_O = UIcon.YELLOW_SQUARE
-    SQUARE_S = UIcon.GREEN_SQUARE
-    SQUARE_T = UIcon.MAGENTA_SQUARE
-    SQUARE_Z = UIcon.RED_SQUARE
-
-
-    def __init__(  # pylint: disable=too-many-arguments
-        self,
-        height: int,
-        width: int,
-        bits: int,
-        square: str,
-        shape: str,
-    ):
-        self.height = height
-        self.width = width
-        self.bits = bits
-        self.square = square
-        self.shape = shape
-
-
-    def show(self, row: int, col: int, square: str):
-        """Shows tetro on the specified coordinate by using the 'square' as
-        the composing unit.
-        """
-        putmsg(row, col, self.shape.format(square))
-
-
-    def rotate(self):
-        """Returns a new tetro with the clockwise rotated shape.
-        """
-        i = TETRO_POOL.index(self)
-        return TETRO_POOL[(i & 0xfc) | ((i + 1) & 0x03)]
-
-
-    @staticmethod
-    def choice():
-        """Returns a random choiced tetro from the pool of tetrominos.
-        """
-        return random.choice(TETRO_POOL)
 
 
 TETRO_I_0 = Tetro(4, 1, 0x0f, Tetro.SQUARE_I, _SHAPE_I0)

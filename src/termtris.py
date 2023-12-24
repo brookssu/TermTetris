@@ -28,7 +28,7 @@ import termkey
 from termkey import getkey, Key
 
 from tt_tetro import Tetro
-from tt_backend import TetrisBackend
+from tt_backend import TetrisBackend, TetroUpdate
 from tt_panel import ActivePanel, MessagePanel
 
 
@@ -111,26 +111,26 @@ class Termtris():
         return None if self.tick else self.backend.move_down()
 
 
-    def _act_response(
+    def _update_tetro(
         self,
         tetro: Tetro,
         row: int,
         col: int,
-        elim_rows: list[int] | None,
+        elims: list[int],
     ):
-        if elim_rows is not None:  # Current tetro has done
+        if elims is not None:  # Current tetro has done
             self.act_panel.merge_tetro()
-            if elim_rows:
-                self.act_panel.blink_rows(elim_rows, 3, 0.1)
-                self.act_panel.remove_rows(elim_rows)
-            self._update_score(len(elim_rows))
+            if elims:
+                self.act_panel.blink_rows(elims, 3, 0.1)
+                self.act_panel.remove_rows(elims)
+            self._update_score(len(elims))
         self.act_panel.refresh_tetro(tetro, row=row, col=col)
 
 
     def run(self):
         """Continuously reads keys from input and gets appropriate functions
-        to process these key events. In idle time, makes the current tetro
-        to fall down by count ticks.
+        to handle key events, then according to the event results, refreshs
+        the displaying of the active panel.
         """
         key_funcs = {
             Key.NONE: self._idle_fall,
@@ -149,9 +149,9 @@ class Termtris():
 
         key = getkey()
         while key != Key.CONTROL_X:
-            res = key_funcs.get(key, self._idle_fall)()
-            if res:  # (tetro, row, col, elim_rows)
-                self._act_response(res[0], res[1], res[2], res[3])
+            update = key_funcs.get(key, self._idle_fall)()
+            if update:
+                self._update_tetro(*update)
             key = getkey(1)
 
 

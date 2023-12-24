@@ -18,8 +18,12 @@
 """
 
 import functools
+from collections import namedtuple
 
 from tt_tetro import Tetro
+
+
+TetroUpdate = namedtuple('TetroUpdate', ['tetro', 'row', 'col', 'elims'])
 
 
 def _check_tetro(func):
@@ -36,33 +40,33 @@ class TetrisBackend:
     """Backend service for the Tetris game.
 
     The backend guides the game by maintaining a internal bitmap grid and
-    the tetro's info. Almost all of its public methods have an uniform
-    returning format of tuple on success, except print_grid() which is only
-    for debugging.
+    the tetro's info. Almost all of its public methods returns the named
+    tuple TetroUpdate on success, and None on failure, except print_grid()
+    which is only for debugging.
 
-    The result tuple is in form of (tetro, row, col, elim_rows), the first
-    three parameters indicates what and where the tetro should be shown, the
+    The result tuple is in form of (tetro, row, col, elims), the first 3
+    parameters indicates what and where the tetro should be shown, the
     last one contains row numbers which have been eliminated if there were.
     """
     def __init__(self, width: int = 10, height: int = 20):
         self.width = width
         self.height = height
+        self.grid: list[int] = [0] * height
         self.tetro: Tetro | None = None
-        self.next_tetro: Tetro = Tetro.choice()
         self.t_row: int
         self.t_col: int
-        self.grid: list[int] = [0] * height
+        self.next_tetro: Tetro = Tetro.choice()
 
 
-    def kick_off(self) -> tuple[Tetro, int, int, list[int] | None] | None:
+    def kick_off(self) -> TetroUpdate | None:
         """Starts a new game.
         """
         for i in range(self.height):
             self.grid[i] = 0
-        return self._issue_next(None)
+        return self._issue_next()
 
 
-    def _issue_next(self, elim_rows: list[int] | None):
+    def _issue_next(self, elims=None):
         self.tetro = self.next_tetro
         self.t_row = 0
         self.t_col = (self.width - self.tetro.width) // 2
@@ -70,31 +74,31 @@ class TetrisBackend:
             self.tetro = None
             return None
         self.next_tetro = Tetro.choice()
-        return self.tetro, self.t_row, self.t_col, elim_rows
+        return TetroUpdate(self.tetro, self.t_row, self.t_col, elims)
 
 
-    def _is_overlapped(self, row: int, col: int) -> bool:
+    def _is_overlapped(self, row, col):
         if not (0 <= col <= self.width - self.tetro.width and
                 row + self.tetro.height <= self.height):
             return True
-        bits = 0
+        bitmap = 0
         mask = (1 << self.tetro.width) - 1
         for i in range(self.tetro.height):
-            bits |= (((self.grid[row + i] >> col) & mask)
+            bitmap |= (((self.grid[row + i] >> col) & mask)
                      << (i * self.tetro.width))
-        return bool(bits & self.tetro.bits)
+        return bool(bitmap & self.tetro.bitmap)
 
 
     def _merge(self):
         mask = (1 << self.tetro.width) - 1
         for i in range(self.tetro.height):
             self.grid[self.t_row + i] |= (
-                    ((self.tetro.bits >> (i * self.tetro.width)) & mask)
+                    ((self.tetro.bitmap >> (i * self.tetro.width)) & mask)
                     << self.t_col)
         self.tetro = None
 
 
-    def _check_elims(self) -> list[int]:
+    def _check_elims(self):
         result = []
         for i, row in enumerate(self.grid):
             if row == (1 << self.width) - 1:
@@ -105,14 +109,14 @@ class TetrisBackend:
 
 
     @_check_tetro
-    def _hori_move(self, offset: int):
+    def _hori_move(self, offset):
         if self._is_overlapped(self.t_row, self.t_col + offset):
             return None
         self.t_col += offset
-        return self.tetro, self.t_row, self.t_col, None
+        return TetroUpdate(self.tetro, self.t_row, self.t_col, None)
 
 
-    def move_left(self) -> tuple[Tetro, int, int, None] | None:
+    def move_left(self) -> TetroUpdate | None:
         """Moves the tetro to the left one column.
 
         Returns:
@@ -123,7 +127,7 @@ class TetrisBackend:
         return self._hori_move(-1)
 
 
-    def move_right(self) -> tuple[Tetro, int, int, None] | None:
+    def move_right(self) -> TetroUpdate | None:
         """Moves the tetro to the right one column.
 
         Returns:
@@ -135,7 +139,7 @@ class TetrisBackend:
 
 
     @_check_tetro
-    def move_down(self) -> tuple[Tetro, int, int, list[int] | None] | None:
+    def move_down(self) -> TetroUpdate | None:
         """Moves the tetro down one row.
 
         If there is no more space to move down, it triggers the current
@@ -147,25 +151,25 @@ class TetrisBackend:
         """
         if self._is_overlapped(self.t_row + 1, self.t_col):
             self._merge()
-            elim_rows = self._check_elims()
-            return self._issue_next(elim_rows)
+            elims = self._check_elims()
+            return self._issue_next(elims)
         self.t_row += 1
-        return self.tetro, self.t_row, self.t_col, None
+        return TetroUpdate(self.tetro, self.t_row, self.t_col, None)
 
 
     @_check_tetro
-    def fall_down(self) -> tuple[Tetro, int, int, None] | None:
+    def fall_down(self) -> TetroUpdate | None:
         """Makes the current tetro to fall down to ground.
         """
         i = 1
         while not self._is_overlapped(self.t_row + i, self.t_col):
             i += 1
         self.t_row += i - 1
-        return self.tetro, self.t_row, self.t_col, None
+        return TetroUpdate(self.tetro, self.t_row, self.t_col, None)
 
 
     @_check_tetro
-    def rotate(self) -> tuple[Tetro, int, int, None] | None:
+    def rotate(self) -> TetroUpdate | None:
         """Rotates the current tetro clockwise.
 
         Returns:
@@ -183,7 +187,7 @@ class TetrisBackend:
             self.tetro = old
             return None
         self.t_col = col
-        return self.tetro, self.t_row, self.t_col, None
+        return TetroUpdate(self.tetro, self.t_row, self.t_col, None)
 
 
     def print_grid(self):
