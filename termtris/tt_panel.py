@@ -27,11 +27,9 @@ import functools
 from collections import namedtuple
 from wcwidth import wcswidth
 
-from cursor import putmsg, downward_seq, rect_border_seq
-import color256 as co
-from unicon import UnicodeIcon as UIcon
+from ltermio import putmsg, downward_seq, rect_border_seq, set_color, UIcon
 
-from tt_tetro import Tetro
+from .tt_tetro import Tetro
 
 
 _EDGE_SQUARE = UIcon.BROWN_SQUARE
@@ -43,12 +41,12 @@ def _color(func):
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
         if self.co_scheme:
-            co.set_color(self.co_scheme[0], self.co_scheme[1])
+            set_color(self.co_scheme[0], self.co_scheme[1])
         try:
             return func(self, *args, **kwargs)
         finally:
             if self.co_scheme:
-                co.set_color(self.co_scheme[2], self.co_scheme[3])
+                set_color(self.co_scheme[2], self.co_scheme[3])
     return wrapper
 
 

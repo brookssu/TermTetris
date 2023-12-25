@@ -21,8 +21,7 @@ all its instances.
 import random
 from dataclasses import dataclass
 
-from cursor import putmsg, v_composing
-from unicon import UnicodeIcon as UIcon
+from ltermio import putmsg, v_composing, UIcon
 
 
 @dataclass(frozen=True)

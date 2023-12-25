@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 #   Copyright 2023 Brooks Su
@@ -21,15 +20,12 @@
 import os
 import sys
 
-import cursor
-import color256 as co
-from color256 import Color
-import termkey
-from termkey import getkey, Key
+import ltermio
+from ltermio import getkey, Key, Color
 
-from tt_tetro import Tetro
-from tt_backend import TetrisBackend, TetroUpdate
-from tt_panel import ActivePanel, MessagePanel
+from .tt_tetro import Tetro
+from .tt_backend import TetrisBackend, TetroUpdate
+from .tt_panel import ActivePanel, MessagePanel
 
 
 _SCORE_TABLE = (10, 100, 200, 400, 800)
@@ -135,7 +131,7 @@ class Termtris():
         key_funcs = {
             Key.NONE: self._idle_fall,
             Key.ENTER: self._new_game,
-            Key.ESC: lambda: not termkey.getch(),
+            Key.ESC: lambda: not ltermio.getch(),
             Key.DOWN: self.backend.move_down,
             Key.SPACE: self.backend.fall_down,
             Key.UP: self.backend.rotate,
@@ -155,6 +151,7 @@ class Termtris():
             key = getkey(1)
 
 
+@ltermio.appentry
 def main():
     """Entry point of the Termtris game.
 
@@ -171,20 +168,6 @@ def main():
     if o_row <= 0 or o_col <= 0:
         raise EnvironmentError('Screen too small to fit game')
 
-    cursor.switch_screen()
-    cursor.clear_screen()
-    cursor.hide_cursor()
-    co.set_color(Color.DEEP_KHAKI, Color.COFFEE)
-    termkey.setparams(echo=False, intr=False)
-
-    try:
-        Termtris(o_row, o_col, width, height).run()
-    finally:
-        termkey.setparams()
-        co.reset_color()
-        cursor.show_cursor()
-        cursor.restore_screen()
-
-
-if __name__ == '__main__':
-    main()
+    ltermio.set_color(Color.DEEP_KHAKI, Color.COFFEE)
+    Termtris(o_row, o_col, width, height).run()
+    ltermio.reset_color()

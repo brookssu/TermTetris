@@ -1,4 +1,7 @@
-0.9.16 Current release
+0.10.1 Current release
+  * Change build tool backend from setuptools to Hatchling.
+  * Modify code to adapt the upgrade of the ltermio package.
+0.9.16
   * have a taste of namedtuple and data class.
 0.9.13
   * fix 'has no attribute keyparam' after upgrade ltermio to 0.2.7.

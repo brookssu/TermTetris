@@ -20,7 +20,7 @@
 import functools
 from collections import namedtuple
 
-from tt_tetro import Tetro
+from .tt_tetro import Tetro
 
 
 TetroUpdate = namedtuple('TetroUpdate', ['tetro', 'row', 'col', 'elims'])
