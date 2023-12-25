@@ -170,4 +170,3 @@ def main():
 
     ltermio.set_color(Color.DEEP_KHAKI, Color.COFFEE)
     Termtris(o_row, o_col, width, height).run()
-    ltermio.reset_color()

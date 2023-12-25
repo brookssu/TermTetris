@@ -1,4 +1,6 @@
-0.10.1 Current release
+0.10.2 Current release
+  * Remove reset_color() from entrypoint main().
+0.10.1
   * Change build tool backend from setuptools to Hatchling.
   * Modify code to adapt the upgrade of the ltermio package.
 0.9.16
