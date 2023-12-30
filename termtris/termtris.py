@@ -23,9 +23,9 @@ import sys
 import ltermio
 from ltermio import getkey, Key, Color
 
-from .tt_tetro import Tetro
-from .tt_backend import TetrisBackend, TetroUpdate
-from .tt_panel import ActivePanel, MessagePanel
+from .tetro import Tetro
+from .backend import TetrisBackend, TetroUpdate
+from .panel import ActivePanel, MessagePanel
 
 
 _SCORE_TABLE = (10, 100, 200, 400, 800)
@@ -34,7 +34,6 @@ _LEVEL_TABLE = (1000, 2000, 4000, 8000, 16000, 32000, 64000, 80_000_000)
 
 class Termtris():
     # pylint: disable=too-few-public-methods
-    # pylint: disable=too-many-instance-attributes
     """The controller of the Termtris game.
 
     The class have only one public method run() which reads keys from input
@@ -49,14 +48,12 @@ class Termtris():
 
         self.score: int = 0
         self.highest: int = 0
-        self.speed: int
         self.tick: int = 0
-        self.stat_sect_row = height - 5
+        self.speed: int  # sets value in _renew_game_stat()
 
 
     def _init_msg_panel(self):
-        self.msg_panel.put_text('Termtris', align=MessagePanel.CENTER)
-        self.msg_panel.add_separator()
+        self.msg_panel.set_title('Termtris')
         self.msg_panel.put_text(
                 'Right:  Move Right\n'
                 'Left:   Move Left\n'
@@ -68,8 +65,8 @@ class Termtris():
                 'Ctrl-X: Exit Game')
         self.msg_panel.add_separator()
 
-        self.msg_panel.add_separator(row=self.stat_sect_row)
-        self.msg_panel.tetro_pos(self.stat_sect_row + 1, 8)
+        self.msg_panel.add_separator(row=self.msg_panel.height - 5)
+        self.msg_panel.tetro_pos(self.msg_panel.height - 4, 8)
         self._renew_game_stat()
 
 
@@ -81,7 +78,7 @@ class Termtris():
                         f'Level: {i + 1}\n'
                         f'Score: {self.score:<6d}\n'
                         f'Highest: {self.highest:<6d}',
-                        row=self.stat_sect_row + 1)
+                        row=self.msg_panel.height - 4)
                 self.msg_panel.refresh_tetro(self.backend.next_tetro)
                 self.speed = len(_LEVEL_TABLE) - i
                 break
@@ -94,7 +91,7 @@ class Termtris():
         self._renew_game_stat()
 
 
-    def _new_game(self) -> None | tuple[Tetro, int, int, list[int] | None]:
+    def _new_game(self) -> TetroUpdate | None:
         self.act_panel.clear()
         res = self.backend.kick_off()
         self.score = 0
@@ -102,7 +99,7 @@ class Termtris():
         return res
 
 
-    def _idle_fall(self) -> None | tuple[Tetro, int, int, list[int] | None]:
+    def _idle_fall(self) -> TetroUpdate | None:
         self.tick = (self.tick + 1) % self.speed
         return None if self.tick else self.backend.move_down()
 

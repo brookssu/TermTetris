@@ -20,7 +20,7 @@
 import functools
 from collections import namedtuple
 
-from .tt_tetro import Tetro
+from .tetro import Tetro
 
 
 TetroUpdate = namedtuple('TetroUpdate', ['tetro', 'row', 'col', 'elims'])
@@ -193,7 +193,7 @@ class TetrisBackend:
     def print_grid(self):
         """Prints bitmap of the grid, only for debugging.
         """
-        print('')
+        print()
         for i, row in enumerate(self.grid):
             bits = bin(row)[:1:-1]
             print(f'{i:02d}: {bits}{"0" * (self.width - len(bits))}')

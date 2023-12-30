@@ -24,12 +24,15 @@ next tetro, greeting and help text, etc.
 
 import time
 import functools
-from collections import namedtuple
 from wcwidth import wcswidth
 
-from ltermio import putmsg, downward_seq, rect_border_seq, set_color, UIcon
+from ltermio import (
+        set_color, set_textattr, reset_textattr,
+        putmsg, downward_seq, rect_border_seq,
+        UIcon, TextAttr,
+)
 
-from .tt_tetro import Tetro
+from .tetro import Tetro
 
 
 _EDGE_SQUARE = UIcon.BROWN_SQUARE
@@ -199,6 +202,15 @@ class MessagePanel(ActivePanel):
         self._row_cursor = 0
 
 
+    def set_title(self, title: str):
+        """Sets panel title.
+        """
+        set_textattr(TextAttr.BOLD)
+        self.put_text(title, align=self.CENTER, row=0)
+        self.add_separator()
+        reset_textattr(TextAttr.BOLD)
+
+
     LEFT = 0
     RIGHT = 1
     CENTER = 2
@@ -244,5 +256,5 @@ class MessagePanel(ActivePanel):
         if row is not None:
             self._row_cursor = row
         putmsg(self.o_row + self._row_cursor, self.o_col + _MARGIN,
-               f'{_SEPARATOR * (self.width - 1)} ')
+               f'{_SEPARATOR * (self.width - 1)}')
         self._row_cursor += 1
