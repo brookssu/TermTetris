@@ -1,4 +1,6 @@
-0.10.3 Current release
+0.10.4 Current release
+  * Add a screenshot picture and show in readme.
+0.10.3
   * Lightly modify code for optimizing.
   + Uses ltermio new func set_textattr() to make title bold.
 0.10.2

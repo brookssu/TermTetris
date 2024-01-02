@@ -8,6 +8,8 @@ Uses **pip** to install the package:
 
 Runs command **termtris** or **tt** after installed, then enjoy!
 
+![A screenshot of termtris](https://github.com/brookssu/termtris/blob/main/gameshot.png)
+
 ## Background
 I wrote this game when I was learning **Python** language a few months ago. As a learning practice, it's not about business, but just for fun and to reminisce about the past.
 
